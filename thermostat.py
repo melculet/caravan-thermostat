@@ -28,20 +28,16 @@ ser = serial.Serial("/dev/serial0", 9600, timeout=1)
 setpoint = 22.0  # Default target temperature
 hysteresis = 0.5  # Degrees of swing allowed
 
-
 def read_room_temperature():
     return bme280.temperature
 
-
 def read_coolant_temperature():
     return coolant_sensor.get_temperature()
-
 
 def send_to_display(room_temp, coolant_temp, burner_on):
     ser.write(f"room.val={int(room_temp * 10)}\xff\xff\xff".encode())
     ser.write(f"coolant.val={int(coolant_temp * 10)}\xff\xff\xff".encode())
     ser.write(f"burner.pic={1 if burner_on else 0}\xff\xff\xff".encode())
-
 
 def update_setpoint_from_display():
     ser.write("get setpoint.val\xff\xff\xff".encode())
@@ -53,7 +49,6 @@ def update_setpoint_from_display():
         except:
             return None
     return None
-
 
 def control_loop():
     burner_on = False
@@ -72,9 +67,7 @@ def control_loop():
 
         GPIO.output(BURNER_RELAY_PIN, GPIO.HIGH if burner_on else GPIO.LOW)
         send_to_display(room_temp, coolant_temp, burner_on)
-
         time.sleep(2)
-
 
 try:
     control_loop()
